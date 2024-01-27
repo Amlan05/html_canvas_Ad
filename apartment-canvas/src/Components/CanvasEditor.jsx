@@ -42,11 +42,11 @@ const CanvasEditor = ({ onCanvasDataChange }) => {
     <div className="lg:w-1/2 w-3/4 -2">
       <div className="text-center">
         <h2 className="text-blue-600 text-3xl mt-4">Ad customization</h2>
-        <p className="text-gray-400">Customize your ad and get the accordingly</p>
+        <p className="text-gray-400 border-b-4 ">Customize your ad and get the accordingly</p>
       </div>
       {/* Edit contents */}
       <div className="text-center mt-6">
-        <p className="border-t-4 lg:text-left text-blue-700">Edit Contents</p>
+        <p className="lg:text-left text-blue-700">Edit Contents</p>
         <div>
           <form className="flex flex-col relative">
             <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-2">
