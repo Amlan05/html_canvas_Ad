@@ -19,6 +19,7 @@ const CanvasEditor = ({ onCanvasDataChange }) => {
       }
     } else if (e.target.name === 'backColor') {
       const newColorHistory = [selectedColor, ...colorHistory.slice(0, 4)];
+      setShowColorPicker(!showColorPicker)
       setColorHistory(newColorHistory);
       setCanvasData({ ...canvasData, [e.target.name]: selectedColor })
     } else {
@@ -26,29 +27,29 @@ const CanvasEditor = ({ onCanvasDataChange }) => {
     }
   };
 
-  const setColorHere = () => {
-    setCanvasData({ ...canvasData, backColor: selectedColor });
-    onCanvasDataChange(canvasData)
+  const setColorHere = (color) => {
+    setCanvasData({ ...canvasData, backColor: color });
+    // onCanvasDataChange(canvasData)
   };
 
   
   useEffect(() => {
     onCanvasDataChange(canvasData);
-    console.log(canvasData)
+    // console.log(canvasData)
   }, [canvasData, onCanvasDataChange]);
 
-  return (
-    <div className="w-1/2 m-2">
+  return ( 
+    <div className="lg:w-1/2 w-3/4 -2">
       <div className="text-center">
         <h2 className="text-blue-600 text-3xl mt-4">Ad customization</h2>
         <p className="text-gray-400">Customize your ad and get the accordingly</p>
       </div>
       {/* Edit contents */}
       <div className="text-center mt-6">
-        <p className="border-t-4 text-left text-blue-700">Edit Contents</p>
+        <p className="border-t-4 lg:text-left text-blue-700">Edit Contents</p>
         <div>
           <form className="flex flex-col relative">
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-2">
               <p className="mb-2 mt-2">Change the ad creative image:</p>
               <label htmlFor="upload" className="cursor-pointer bg-blue-500 text-white font-bold py-0.5 px-1 rounded mb-2 mt-2">
                 Select File
@@ -75,9 +76,12 @@ const CanvasEditor = ({ onCanvasDataChange }) => {
               {colorHistory.map((color, index) => (
                 <div
                   key={index}
-                  className="color-history-item w-8 h-8 rounded-full cursor-pointer border border-white"
+                  className={`color-history-item w-8 h-8 rounded-full cursor-pointer  ${selectedColor === color ? ' border-blue-500 border-2' : ''}`}
                   style={{ backgroundColor: color }}
-                  onClick={() => setColorHere(color)}
+                  onClick={() => {
+                    setColorHere(color)
+                    setSelectedColor(color)
+                  }}
                 ></div>
               ))}
               <button

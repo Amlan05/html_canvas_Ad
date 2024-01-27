@@ -1,3 +1,5 @@
-.givMargin{
-    margin-left: 25px;
-}
+@media (min-width: 1030px) {
+    .app-container {
+      align-items: center;
+    }
+  }

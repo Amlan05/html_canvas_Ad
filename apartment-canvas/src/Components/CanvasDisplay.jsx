@@ -47,24 +47,19 @@ class CTAElement {
   }
 
   draw(ctx) {
-    // Set font size and style
     ctx.font = `${this.fontSize}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Measure the text width and height
     const textWidth = ctx.measureText(this.text).width;
-    const textHeight = this.fontSize * 1.2; // Assuming 20% padding above and below the text
+    const textHeight = this.fontSize * 1.2; 
 
-    // Calculate the width and height of the rounded rect based on text size and padding
     const rectWidth = textWidth + 2 * this.padding;
     const rectHeight = textHeight + 2 * this.padding;
 
-    // Calculate the position of the rounded rect based on text position and rect size
     const rectX = this.position.x - rectWidth / 2;
     const rectY = this.position.y - rectHeight / 2;
 
-    // Draw the rounded rect background
     ctx.fillStyle = this.backgroundColor;
     ctx.beginPath();
     ctx.moveTo(rectX + this.borderRadius, rectY);
@@ -75,7 +70,6 @@ class CTAElement {
     ctx.closePath();
     ctx.fill();
 
-    // Draw the text
     ctx.fillStyle = this.textColor;
     ctx.fillText(this.text, this.position.x, this.position.y);
   }
@@ -94,8 +88,13 @@ class ImageElement {
   }
 
   draw(ctx) {
-    ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+      ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
+  drawStroke(ctx, x, y, width, height, strokeWidth = 4) {
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = strokeWidth; 
+    ctx.strokeRect(x, y, width, height); 
+}
 }
 
 const CanvasDisplay = ({canvasData}) => {
@@ -112,9 +111,7 @@ const CanvasDisplay = ({canvasData}) => {
 
     const caption = new TextElement(canvasData.adContent || jsonData.caption.text, jsonData.caption.position, jsonData.caption.font_size, jsonData.caption.alignment, jsonData.caption.text_color, jsonData.caption.max_characters_per_line);
     const ctaButton = new CTAElement(canvasData.cta || jsonData.cta.text, jsonData.cta.position, jsonData.cta.text_color, jsonData.cta.background_color);
-    // const imageMask = new ImageElement(jsonData.image_mask.x, jsonData.image_mask.y, jsonData.image_mask.width, jsonData.image_mask.height, jsonData.urls.mask);
     const designPattern = new ImageElement(0, 0, canvas.width, canvas.height, jsonData.urls.design_pattern);
-    // const maskStroke = new ImageElement(56, 442, 970, 600, jsonData.urls.stroke);
     const imageMask = new ImageElement(jsonData.image_mask.x, jsonData.image_mask.y, jsonData.image_mask.width, jsonData.image_mask.height, jsonData.urls.mask);
     const maskStroke = new ImageElement(56, 442, 970, 600, jsonData.urls.stroke);
 
@@ -122,39 +119,45 @@ const CanvasDisplay = ({canvasData}) => {
     const imageadd = new ImageElement(jsonData.image_mask.x, jsonData.image_mask.y, jsonData.image_mask.width, jsonData.image_mask.height, canvasData.img || defImage)
 
 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
     ctx.fillStyle = canvasData.backColor || "#0369A1";
 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-    // Draw design pattern (background layer)
-    designPattern.draw(ctx);
+    designPattern.image.onload = () => {
+      designPattern.draw(ctx);
+    };
 
-    // Draw image mask
-    // ctx.globalCompositeOperation = 'source-in';
+
+
+    ctx.globalCompositeOperation = 'source-in';
+
+    // setTimeout( () => {
+      imageadd.image.onload = () => {
+        imageadd.draw(ctx);
+      };
+    // }, 0)
+
+    ctx.globalCompositeOperation = 'source-over';
+
     imageMask.draw(ctx);
-    setTimeout( () => {
-      imageadd.draw(ctx);
-    }, 0)
-    // ctx.globalCompositeOperation = 'source-over';
 
-    maskStroke.draw(ctx);
-
-    // ctx.globalCompositeOperation = 'source-over';
-
-    // Draw image within the mask
-    
-    // Draw mask stroke
     // maskStroke.draw(ctx);
+    imageadd.drawStroke(ctx, jsonData.image_mask.x, jsonData.image_mask.y, jsonData.image_mask.width, jsonData.image_mask.height);
 
-    // Draw other elements
     caption.draw(ctx);
+
     ctaButton.draw(ctx);
+
+    console.log(canvasData)
 
   }, [canvasData]);
 
   return (
-    <div >
-    <canvas ref={canvasRef} width={1080} height={1080} className='m-8 w-3/4 h-3/4' ></canvas>
+    <div className='flex justify-center mt-5'>
+    <canvas ref={canvasRef} width={1080} height={1080} className='w-3/4' ></canvas>
     </div>
   );
 };
